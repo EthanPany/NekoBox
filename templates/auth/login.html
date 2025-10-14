@@ -13,9 +13,14 @@
       <input type="password" name="password" class="uk-input" type="text">
     </div>
     <div class="uk-margin">
+      {{ if .EnableRecaptcha }}
       <button type="submit" class="uk-button uk-button-primary g-recaptcha" data-sitekey="{{.RecaptchaSiteKey}}"
               data-callback="onSubmit">登录
       </button>
+      {{ else }}
+      <button type="submit" class="uk-button uk-button-primary" onclick="onSubmit()">登录
+      </button>
+      {{ end }}
       <a href="/forgot-password" class="uk-button uk-button-default">忘记密码
       </a>
     </div>

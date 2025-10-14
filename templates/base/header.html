@@ -15,6 +15,7 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.12.1/vconsole.min.js" type="application/javascript"></script>
   <script>new window.VConsole()</script>
   {{ end }}
+  {{ if .EnableRecaptcha }}
   {{ if .RecaptchaTurnstileStyle }}
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
   <script>
@@ -31,6 +32,9 @@
       }</script>
   {{ else }}
   <script src="{{.RecaptchaDomain}}/recaptcha/api.js" async defer></script>
+  <script>function onSubmit() {document.getElementById('form').submit();}</script>
+  {{ end }}
+  {{ else }}
   <script>function onSubmit() {document.getElementById('form').submit();}</script>
   {{ end }}
   {{ if ne SentryDSN "" }}

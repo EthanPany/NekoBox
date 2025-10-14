@@ -26,6 +26,7 @@ var (
 
 	Security struct {
 		EnableTextCensor bool `ini:"enable_text_censor"`
+		EnableRecaptcha  bool `ini:"enable_recaptcha"`
 	}
 
 	Server struct {

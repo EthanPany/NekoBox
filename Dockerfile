@@ -19,6 +19,7 @@ RUN apk update && apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/lo
 WORKDIR /home/app
 
 COPY --from=builder /app/NekoBox .
+COPY conf ./conf
 
 RUN chmod 777 /home/app/NekoBox
 

@@ -25,18 +25,20 @@ func RegisterAction(ctx context.Context, f form.Register, recaptcha recaptcha.Re
 		return
 	}
 
-	// Check recaptcha code.
-	resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
-	if err != nil {
-		logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
-		ctx.SetInternalErrorFlash()
-		ctx.Redirect("/register")
-		return
-	}
-	if !resp.Success {
-		ctx.SetErrorFlash("验证码错误")
-		ctx.Redirect("/register")
-		return
+	// Check recaptcha code if enabled.
+	if conf.Security.EnableRecaptcha {
+		resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
+		if err != nil {
+			logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
+			ctx.SetInternalErrorFlash()
+			ctx.Redirect("/register")
+			return
+		}
+		if !resp.Success {
+			ctx.SetErrorFlash("验证码错误")
+			ctx.Redirect("/register")
+			return
+		}
 	}
 
 	if err := db.Users.Create(ctx.Request().Context(), db.CreateUserOptions{

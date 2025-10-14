@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	"github.com/wuhan005/NekoBox/internal/conf"
 	"github.com/wuhan005/NekoBox/internal/context"
 	"github.com/wuhan005/NekoBox/internal/db"
 	"github.com/wuhan005/NekoBox/internal/form"
@@ -26,19 +27,21 @@ func LoginAction(ctx context.Context, f form.Login, recaptcha recaptcha.Recaptch
 		return
 	}
 
-	// Check recaptcha code.
+	// Check recaptcha code if enabled.
 	uri := ctx.Request().Request.RequestURI // Keep the query when redirecting.
-	resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
-	if err != nil {
-		logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
-		ctx.SetInternalErrorFlash()
-		ctx.Redirect(uri)
-		return
-	}
-	if !resp.Success {
-		ctx.SetErrorFlash("验证码错误")
-		ctx.Redirect(uri)
-		return
+	if conf.Security.EnableRecaptcha {
+		resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
+		if err != nil {
+			logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
+			ctx.SetInternalErrorFlash()
+			ctx.Redirect(uri)
+			return
+		}
+		if !resp.Success {
+			ctx.SetErrorFlash("验证码错误")
+			ctx.Redirect(uri)
+			return
+		}
 	}
 
 	user, err := db.Users.Authenticate(ctx.Request().Context(), f.Email, f.Password)

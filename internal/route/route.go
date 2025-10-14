@@ -82,6 +82,50 @@ func New() *flamego.Flame {
 	reqUserSignOut := context.Toggle(&context.ToggleOptions{UserSignOutRequired: true})
 	reqUserSignIn := context.Toggle(&context.ToggleOptions{UserSignInRequired: true})
 
+	// Prepare middleware list
+	middlewares := []flamego.Handler{
+		cache.Cacher(cache.Options{
+			Initer: cacheRedis.Initer(),
+			Config: cacheRedis.Config{
+				Options: &cacheRedis.Options{
+					Addr:     conf.Redis.Addr,
+					Password: conf.Redis.Password,
+					DB:       0,
+				},
+			},
+		}),
+	}
+
+	// Conditionally add reCAPTCHA middleware
+	if conf.Security.EnableRecaptcha {
+		middlewares = append(middlewares, recaptcha.V3(
+			recaptcha.Options{
+				Secret: conf.Recaptcha.ServerKey,
+				VerifyURL: func() recaptcha.VerifyURL {
+					if conf.Recaptcha.TurnstileStyle {
+						// FYI: https://developers.cloudflare.com/turnstile/migration/migrating-from-recaptcha/
+						return "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+					}
+					return recaptcha.VerifyURLGlobal
+				}(),
+			},
+		))
+	}
+
+	// Add remaining middlewares
+	middlewares = append(middlewares,
+		sessioner,
+		csrf.Csrfer(csrf.Options{
+			Secret: conf.Server.XSRFKey,
+			Header: "X-CSRF-Token",
+		}),
+		template.Templater(template.Options{
+			FileSystem: templateFS,
+			FuncMaps:   templatepkg.FuncMap(),
+		}),
+		context.Contexter(),
+	)
+
 	f.Group("", func() {
 		f.Get("/", route.Home)
 		f.Get("/pixel", reqUserSignIn, pixel.Index)
@@ -142,40 +186,7 @@ func New() *flamego.Flame {
 
 			f.Any("/pixel/{**}", reqUserSignIn, pixel.Proxy)
 		}, context.APIEndpoint)
-	},
-		cache.Cacher(cache.Options{
-			Initer: cacheRedis.Initer(),
-			Config: cacheRedis.Config{
-				Options: &cacheRedis.Options{
-					Addr:     conf.Redis.Addr,
-					Password: conf.Redis.Password,
-					DB:       0,
-				},
-			},
-		}),
-		recaptcha.V3(
-			recaptcha.Options{
-				Secret: conf.Recaptcha.ServerKey,
-				VerifyURL: func() recaptcha.VerifyURL {
-					if conf.Recaptcha.TurnstileStyle {
-						// FYI: https://developers.cloudflare.com/turnstile/migration/migrating-from-recaptcha/
-						return "https://challenges.cloudflare.com/turnstile/v0/siteverify"
-					}
-					return recaptcha.VerifyURLGlobal
-				}(),
-			},
-		),
-		sessioner,
-		csrf.Csrfer(csrf.Options{
-			Secret: conf.Server.XSRFKey,
-			Header: "X-CSRF-Token",
-		}),
-		template.Templater(template.Options{
-			FileSystem: templateFS,
-			FuncMaps:   templatepkg.FuncMap(),
-		}),
-		context.Contexter(),
-	)
+	}, middlewares...)
 	f.NotFound(func(ctx flamego.Context) {
 		ctx.Redirect("/")
 	})
