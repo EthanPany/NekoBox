@@ -75,11 +75,14 @@
 
       {{ if .IsOwnPage}}
       <h5 class="uk-text-center">回答问题</h5>
-      <form method="post" action="/_/{{ .PageUser.Domain }}/{{ .Question.ID }}/answer" enctype="multipart/form-data">
+      <form method="post" action="/_/{{ .PageUser.Domain }}/{{ .Question.ID }}/answer" enctype="multipart/form-data" x-data="{ answerText: '{{ if .answer }}{{ .answer }}{{ else }}{{ .Question.Answer }}{{ end }}' }">
         {{ .CSRFTokenHTML }}
         <div class="uk-margin uk-text-center">
-              <textarea name="answer" class="uk-textarea" rows="5" maxlength="1000"
-                        placeholder="在此处撰写你的回答...">{{ if .answer }}{{ .answer }}{{ else }}{{ .Question.Answer }}{{ end }}</textarea>
+              <textarea name="answer" class="uk-textarea" rows="5" maxlength="2000"
+                        placeholder="在此处撰写你的回答..." x-model="answerText">{{ if .answer }}{{ .answer }}{{ else }}{{ .Question.Answer }}{{ end }}</textarea>
+              <div class="uk-text-right uk-text-small uk-text-muted" style="margin-top: 5px;">
+                <span x-text="answerText.length"></span>/2000 字符
+              </div>
               <div x-data="{ files: null }" style="width: 100%; background-color: #f8f8f8; display: flex; padding-top: 5px; padding-bottom: 5px; align-items: center; justify-content: start;gap: 5px">
                 <div uk-form-custom>
                   <a href="#" class="uk-icon-link" uk-icon="image" style="margin-left: 10px"></a>

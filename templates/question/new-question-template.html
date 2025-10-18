@@ -8,11 +8,14 @@
   </div>
 </div>
 {{ else }}
-<form method="post" action="/_/{{.PageUser.Domain}}" enctype="multipart/form-data" id="form">
+<form method="post" action="/_/{{.PageUser.Domain}}" enctype="multipart/form-data" id="form" x-data="{ questionText: '{{.content}}' }">
   {{ .CSRFTokenHTML }}
   <div class="uk-margin uk-text-center">
         <textarea name="content" class="uk-textarea" rows="5" placeholder="在此处撰写你的问题..."
-                  maxlength="1000">{{.content}}</textarea>
+                  maxlength="2000" x-model="questionText">{{.content}}</textarea>
+        <div class="uk-text-right uk-text-small uk-text-muted" style="margin-top: 5px;">
+          <span x-text="questionText.length"></span>/2000 字符
+        </div>
     <div x-data="{ files: null }" style="width: 100%; background-color: #f8f8f8; display: flex; padding-top: 5px; padding-bottom: 5px; align-items: center; justify-content: start;gap: 5px">
       <div uk-form-custom>
         <a href="#" class="uk-icon-link" uk-icon="image" style="margin-left: 10px"></a>

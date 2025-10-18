@@ -6,12 +6,12 @@ package template
 
 import (
 	"encoding/json"
-	"html"
 	"html/template"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/russross/blackfriday/v2"
 	"gorm.io/datatypes"
 
 	"github.com/wuhan005/NekoBox/internal/conf"
@@ -43,14 +43,24 @@ func FuncMap() []template.FuncMap {
 				return t.Format(format)
 			},
 			"QuestionFormat": func(input string) template.HTML {
-				input = html.EscapeString(input)
-				input = strings.ReplaceAll(input, "\n", "</br>")
-				return template.HTML(input)
+				// Convert markdown to HTML with safe rendering
+				htmlOutput := blackfriday.Run([]byte(input),
+					blackfriday.WithExtensions(
+						blackfriday.CommonExtensions|
+							blackfriday.Autolink|
+							blackfriday.Strikethrough|
+							blackfriday.Tables))
+				return template.HTML(htmlOutput)
 			},
 			"AnswerFormat": func(input string) template.HTML {
-				input = html.EscapeString(input)
-				input = strings.ReplaceAll(input, "\n", "</br>")
-				return template.HTML(input)
+				// Convert markdown to HTML with safe rendering
+				htmlOutput := blackfriday.Run([]byte(input),
+					blackfriday.WithExtensions(
+						blackfriday.CommonExtensions|
+							blackfriday.Autolink|
+							blackfriday.Strikethrough|
+							blackfriday.Tables))
+				return template.HTML(htmlOutput)
 			},
 			"SentryDSN": func() string {
 				return conf.App.SentryDSN
