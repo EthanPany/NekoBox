@@ -14,7 +14,6 @@ import (
 	cacheRedis "github.com/flamego/cache/redis"
 	"github.com/flamego/csrf"
 	"github.com/flamego/flamego"
-	"github.com/flamego/recaptcha"
 	"github.com/flamego/session"
 	"github.com/flamego/session/mysql"
 	sessionRedis "github.com/flamego/session/redis"
@@ -153,18 +152,6 @@ func New() *flamego.Flame {
 				},
 			},
 		}),
-		recaptcha.V3(
-			recaptcha.Options{
-				Secret: conf.Recaptcha.ServerKey,
-				VerifyURL: func() recaptcha.VerifyURL {
-					if conf.Recaptcha.TurnstileStyle {
-						// FYI: https://developers.cloudflare.com/turnstile/migration/migrating-from-recaptcha/
-						return "https://challenges.cloudflare.com/turnstile/v0/siteverify"
-					}
-					return recaptcha.VerifyURLGlobal
-				}(),
-			},
-		),
 		sessioner,
 		csrf.Csrfer(csrf.Options{
 			Secret: conf.Server.XSRFKey,

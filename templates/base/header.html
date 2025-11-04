@@ -15,28 +15,6 @@
   <script src="https://cdn.jsdelivr.net/npm/vconsole@3.12.1/dist/vconsole.min.js" type="application/javascript"></script>
   <script>new window.VConsole()</script>
   {{ end }}
-  {{ if .RecaptchaEnabled }}
-    {{ if .RecaptchaTurnstileStyle }}
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.g-recaptcha').forEach(item => {
-                item.disabled = true;
-            });
-        });
-
-        function onSubmit() {
-            document.querySelectorAll('.g-recaptcha').forEach(item => {
-                item.disabled = false;
-            })
-        }</script>
-    {{ else }}
-    <script src="{{.RecaptchaDomain}}/recaptcha/api.js" async defer></script>
-    <script>function onSubmit() {document.getElementById('form').submit();}</script>
-    {{ end }}
-  {{ else }}
-  <script>function onSubmit() {document.getElementById('form').submit();}</script>
-  {{ end }}
   {{ if ne SentryDSN "" }}
   <script
           src="https://browser.sentry-cdn.com/7.37.2/bundle.tracing.replay.min.js"
@@ -53,9 +31,6 @@
       });
   </script>
   {{ end }}
-  <style>
-      .grecaptcha-badge {visibility: hidden;}
-  </style>
 
   {{ if .IsUserPage }}
   <meta property="og:image" content="{{ .PageUser.Avatar }}?og-image=1" />

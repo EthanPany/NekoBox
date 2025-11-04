@@ -7,7 +7,6 @@ package auth
 import (
 	"path"
 
-	"github.com/flamego/recaptcha"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -20,26 +19,13 @@ func Login(ctx context.Context) {
 	ctx.Success("auth/login")
 }
 
-func LoginAction(ctx context.Context, f form.Login, recaptcha recaptcha.RecaptchaV3) {
+func LoginAction(ctx context.Context, f form.Login) {
 	if ctx.HasError() {
 		ctx.Success("auth/login")
 		return
 	}
 
-	// Check recaptcha code.
 	uri := ctx.Request().Request.RequestURI // Keep the query when redirecting.
-	resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
-	if err != nil {
-		logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
-		ctx.SetInternalErrorFlash()
-		ctx.Redirect(uri)
-		return
-	}
-	if !resp.Success {
-		ctx.SetErrorFlash("验证码错误")
-		ctx.Redirect(uri)
-		return
-	}
 
 	user, err := db.Users.Authenticate(ctx.Request().Context(), f.Email, f.Password)
 	if err != nil {

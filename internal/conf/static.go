@@ -27,7 +27,6 @@ var (
 
 	Security struct {
 		EnableTextCensor bool `ini:"enable_text_censor"`
-		EnableRecaptcha  bool `ini:"enable_recaptcha"`
 	}
 
 	Server struct {
@@ -51,13 +50,6 @@ var (
 	Redis struct {
 		Addr     string `ini:"addr"`
 		Password string `ini:"password"`
-	}
-
-	Recaptcha struct {
-		Domain         string `ini:"domain"`
-		SiteKey        string `ini:"site_key"`
-		ServerKey      string `ini:"server_key"`
-		TurnstileStyle bool   `ini:"turnstile_style"`
 	}
 
 	Pixel struct {

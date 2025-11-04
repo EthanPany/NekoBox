@@ -54,10 +54,6 @@ func Init() error {
 		return errors.Wrap(err, "map 'redis'")
 	}
 
-	if err := File.Section("recaptcha").MapTo(&Recaptcha); err != nil {
-		return errors.Wrap(err, "map 'recaptcha'")
-	}
-
 	if err := File.Section("pixel").MapTo(&Pixel); err != nil {
 		return errors.Wrap(err, "map 'pixel'")
 	}

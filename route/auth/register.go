@@ -5,7 +5,6 @@
 package auth
 
 import (
-	"github.com/flamego/recaptcha"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -19,23 +18,9 @@ func Register(ctx context.Context) {
 	ctx.Success("auth/register")
 }
 
-func RegisterAction(ctx context.Context, f form.Register, recaptcha recaptcha.RecaptchaV3) {
+func RegisterAction(ctx context.Context, f form.Register) {
 	if ctx.HasError() {
 		ctx.Success("auth/register")
-		return
-	}
-
-	// Check recaptcha code.
-	resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
-	if err != nil {
-		logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
-		ctx.SetInternalErrorFlash()
-		ctx.Redirect("/register")
-		return
-	}
-	if !resp.Success {
-		ctx.SetErrorFlash("验证码错误")
-		ctx.Redirect("/register")
 		return
 	}
 

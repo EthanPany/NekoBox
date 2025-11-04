@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/flamego/cache"
-	"github.com/flamego/recaptcha"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/thanhpk/randstr"
@@ -24,23 +23,9 @@ func ForgotPassword(ctx context.Context) {
 	ctx.Success("auth/forgot-password")
 }
 
-func ForgotPasswordAction(ctx context.Context, f form.ForgotPassword, cache cache.Cache, recaptcha recaptcha.RecaptchaV3) {
+func ForgotPasswordAction(ctx context.Context, f form.ForgotPassword, cache cache.Cache) {
 	if ctx.HasError() {
 		ctx.Success("auth/forgot-password")
-		return
-	}
-
-	// Check recaptcha code.
-	resp, err := recaptcha.Verify(f.Recaptcha, ctx.Request().Request.RemoteAddr)
-	if err != nil {
-		logrus.WithContext(ctx.Request().Context()).WithError(err).Error("Failed to check recaptcha")
-		ctx.SetInternalErrorFlash()
-		ctx.Redirect("/forgot-password")
-		return
-	}
-	if !resp.Success {
-		ctx.SetErrorFlash("验证码错误")
-		ctx.Redirect("/forgot-password")
 		return
 	}
 

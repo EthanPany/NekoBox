@@ -185,8 +185,6 @@ github.com/flamego/flamego v1.0.0/go.mod h1:apiAxIxeHujHFX4Yr0BHmQFJuZUM07XztdQS
 github.com/flamego/flamego v1.1.0/go.mod h1:sMqWT2ONQkZsCHte/k8hYmfnbbLgnfv7lL+VJpfv+EU=
 github.com/flamego/flamego v1.7.0 h1:c1Lu16PBAZKkpsjHw42vwotdoQnMMpUi60ITP41W12w=
 github.com/flamego/flamego v1.7.0/go.mod h1:dnVMBJyHKaxjcqRVN93taSK+YB/9p+Op1GdLIuA1hFQ=
-github.com/flamego/recaptcha v1.0.2 h1:Zc60k0RoAvSi/Ce9A6ue+aEcML7AQ6l2MJHFYBEQZTE=
-github.com/flamego/recaptcha v1.0.2/go.mod h1:Uzfa1JyIEocS/Yvb6urZN3CWUm4gFhXWhiuqEeTVM/M=
 github.com/flamego/session v1.1.0/go.mod h1:UVzO5kn1RjaPetyzJpaXys2v6XJvrd76fe28N1O2g0c=
 github.com/flamego/session v1.2.1 h1:tk4695rdBkkRhT6a4LdxzH/qz+ToO1XYCsmVcypZZXM=
 github.com/flamego/session v1.2.1/go.mod h1:wV3JdoW1hG9y8QsKKQw885nHuVzHjxU2jLkNqVhTmb8=

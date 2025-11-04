@@ -12,7 +12,6 @@ require (
 	github.com/flamego/cache v1.1.0
 	github.com/flamego/csrf v1.0.1
 	github.com/flamego/flamego v1.7.0
-	github.com/flamego/recaptcha v1.0.2
 	github.com/flamego/session v1.2.1
 	github.com/flamego/template v1.0.0
 	github.com/pkg/errors v0.9.1
