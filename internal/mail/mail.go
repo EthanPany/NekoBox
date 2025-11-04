@@ -24,7 +24,7 @@ func SendNewQuestionMail(email, domain string, questionID uint, questionContent 
 		"link":     fmt.Sprintf("%s/_/%s/%d", conf.App.ExternalURL, domain, questionID),
 		"question": questionContent,
 	}
-	return sendTemplateMail(email, "【NekoBox】您有一个新的提问", templates.FS, "mail/new-question.html", params)
+	return sendTemplateMail(email, fmt.Sprintf("【%s】您有一个新的提问", conf.App.Title), templates.FS, "mail/new-question.html", params)
 }
 
 func SendNewAnswerMail(email, domain string, questionID uint, question, answer string) error {
@@ -33,7 +33,7 @@ func SendNewAnswerMail(email, domain string, questionID uint, question, answer s
 		"question": question,
 		"answer":   answer,
 	}
-	return sendTemplateMail(email, "【NekoBox】您的提问有了回复", templates.FS, "mail/new-answer.html", params)
+	return sendTemplateMail(email, fmt.Sprintf("【%s】您的提问有了回复", conf.App.Title), templates.FS, "mail/new-answer.html", params)
 }
 
 func SendPasswordRecoveryMail(email, code string) error {
@@ -41,7 +41,7 @@ func SendPasswordRecoveryMail(email, code string) error {
 		"link":  fmt.Sprintf("%s/recover-password?code=%s", conf.App.ExternalURL, code),
 		"email": email,
 	}
-	return sendTemplateMail(email, "【NekoBox】账号密码找回", templates.FS, "mail/password-recovery.html", params)
+	return sendTemplateMail(email, fmt.Sprintf("【%s】账号密码找回", conf.App.Title), templates.FS, "mail/password-recovery.html", params)
 }
 
 func sendTemplateMail(email, title string, templateFS embed.FS, templatePath string, params map[string]string) error {
@@ -53,6 +53,7 @@ func sendTemplateMail(email, title string, templateFS embed.FS, templatePath str
 
 	// General params.
 	params["year"] = time.Now().Format("2006")
+	params["appTitle"] = conf.App.Title
 
 	if err := t.Execute(&content, params); err != nil {
 		return errors.Wrap(err, "execute template")
@@ -63,7 +64,7 @@ func sendTemplateMail(email, title string, templateFS embed.FS, templatePath str
 
 func sendMail(to, title, content string) error {
 	m := gomail.NewMessage()
-	m.SetHeader("From", fmt.Sprintf("NekoBox <%s>", conf.Mail.Account))
+	m.SetHeader("From", fmt.Sprintf("%s <%s>", conf.App.Title, conf.Mail.Account))
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", title)
 	m.SetBody("text/html", content)

@@ -15,6 +15,7 @@ var (
 var (
 	App struct {
 		Production            bool   `ini:"production"`
+		Title                 string `ini:"title"`
 		ExternalURL           string `ini:"external_url"`
 		ICP                   string `ini:"icp"`
 		UptraceDSN            string `ini:"uptrace_dsn"`

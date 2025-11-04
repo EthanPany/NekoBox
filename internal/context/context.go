@@ -210,7 +210,8 @@ func Contexter() flamego.Handler {
 			}
 		}
 
-		c.SetTitle("NekoBox")
+		c.SetTitle(conf.App.Title)
+		c.Data["AppTitle"] = conf.App.Title
 		c.Data["CSRFToken"] = x.Token()
 		c.Data["CSRFTokenHTML"] = templatepkg.Safe(`<input type="hidden" name="_csrf" value="` + x.Token() + `">`)
 
