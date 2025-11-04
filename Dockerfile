@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine as builder
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /app
 
@@ -19,6 +19,7 @@ RUN apk update && apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/lo
 WORKDIR /home/app
 
 COPY --from=builder /app/NekoBox .
+COPY --from=builder /app/conf ./conf
 
 RUN chmod 777 /home/app/NekoBox
 
