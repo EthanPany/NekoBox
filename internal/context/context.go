@@ -215,6 +215,7 @@ func Contexter() flamego.Handler {
 		c.Data["CSRFToken"] = x.Token()
 		c.Data["CSRFTokenHTML"] = templatepkg.Safe(`<input type="hidden" name="_csrf" value="` + x.Token() + `">`)
 
+		c.Data["RecaptchaEnabled"] = conf.Security.EnableRecaptcha
 		c.Data["RecaptchaDomain"] = conf.Recaptcha.Domain
 		c.Data["RecaptchaSiteKey"] = conf.Recaptcha.SiteKey
 		c.Data["RecaptchaTurnstileStyle"] = conf.Recaptcha.TurnstileStyle
