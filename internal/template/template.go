@@ -6,12 +6,13 @@ package template
 
 import (
 	"encoding/json"
-	"html"
 	"html/template"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday/v2"
 	"gorm.io/datatypes"
 
 	"github.com/wuhan005/NekoBox/internal/conf"
@@ -43,14 +44,10 @@ func FuncMap() []template.FuncMap {
 				return t.Format(format)
 			},
 			"QuestionFormat": func(input string) template.HTML {
-				input = html.EscapeString(input)
-				input = strings.ReplaceAll(input, "\n", "</br>")
-				return template.HTML(input)
+				return markdownToHTML(input)
 			},
 			"AnswerFormat": func(input string) template.HTML {
-				input = html.EscapeString(input)
-				input = strings.ReplaceAll(input, "\n", "</br>")
-				return template.HTML(input)
+				return markdownToHTML(input)
 			},
 			"SentryDSN": func() string {
 				return conf.App.SentryDSN
@@ -76,4 +73,21 @@ func FuncMap() []template.FuncMap {
 
 func Safe(raw string) template.HTML {
 	return template.HTML(raw)
+}
+
+// markdownToHTML converts markdown text to sanitized HTML
+func markdownToHTML(input string) template.HTML {
+	// Render markdown to HTML
+	unsafe := blackfriday.Run([]byte(input), blackfriday.WithExtensions(
+		blackfriday.CommonExtensions|
+			blackfriday.AutoHeadingIDs|
+			blackfriday.Strikethrough|
+			blackfriday.Tables))
+
+	// Sanitize HTML to prevent XSS attacks
+	// Use UGC policy (User Generated Content) which allows common safe HTML tags
+	policy := bluemonday.UGCPolicy()
+	safe := policy.SanitizeBytes(unsafe)
+
+	return template.HTML(safe)
 }
